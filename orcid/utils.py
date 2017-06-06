@@ -4,6 +4,7 @@ def dict_value_from_path(d, path):
         cur_dict = cur_dict.get(key, {})
     return cur_dict.get(path[-1], None) if cur_dict is not None else None
 
+
 def dictmapper(typename, mapping):
     """
     A factory to create `namedtuple`-like classes from a field-to-dict-path
@@ -26,7 +27,8 @@ def dictmapper(typename, mapping):
     def getter_from_dict_path(path):
         if not callable(path) and len(path) < 1:
             raise ValueError('Dict paths should be iterables with at least one'
-                             ' key or callable objects that take one argument.')
+                             ' key or callable objects that take one argument')
+
         def getter(self):
             cur_dict = self._original_dict
             if callable(path):
@@ -34,13 +36,14 @@ def dictmapper(typename, mapping):
             return dict_value_from_path(cur_dict, path)
         return getter
 
-    prop_mapping = dict((k, property(getter_from_dict_path(v))) 
-                        for k, v in mapping.iteritems())
+    prop_mapping = dict((k, property(getter_from_dict_path(mapping[k])))
+                        for k in mapping.keys())
     prop_mapping['__init__'] = init
     return type(typename, tuple(), prop_mapping)
 
+
 class MappingRule(object):
-    def __init__(self, path, further_func = lambda x : x):
+    def __init__(self, path, further_func=lambda x: x):
         self.path = path
         self.further_func = further_func
 

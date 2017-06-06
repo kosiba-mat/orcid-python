@@ -84,7 +84,7 @@ Works = dictmapper('Works', {
 })
 
 AuthorBase = dictmapper('AuthorBase', {
-    'orcid':['orcid-profile','orcid','value'],
+    'orcid':['orcid-profile','orcid-identifier','path'],
     'family_name':PERSONAL_DETAILS_PATH + ['family-name','value'],
     'given_name':PERSONAL_DETAILS_PATH + ['given-names','value'],
     'biography':BIO_PATH + ['biography',],
@@ -127,7 +127,8 @@ def get(orcid_id):
 
 def search(query):
     resp = requests.get(ORCID_PUBLIC_BASE_URL + 'search/orcid-bio',
-                        params={'q':unicode(query)}, headers=BASE_HEADERS)
+                        params={'q':query}, headers=BASE_HEADERS)
     json_body = resp.json()
+    print(json_body.get('orcid-search-results'))
     return (Author(res) for res in json_body.get('orcid-search-results', {})\
             .get('orcid-search-result'))
